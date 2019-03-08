@@ -108,6 +108,7 @@ import { Component, Vue, Provide } from "nuxt-property-decorator";
 import axios from "axios";
 import { Translation, Language } from "../types/translation";
 import { UserGroup } from "../types/user";
+import ElementUI from 'element-ui';
 import { ElTableColumn } from "element-ui/types/table-column";
 import { ElTable } from "element-ui/types/table";
 
@@ -391,38 +392,27 @@ export default class GroupAdmin extends Vue {
 
   private async handlePagePending() {
     var tempSelectedList: UserGroup[] = [...this.multipleSelectionPending];
-    // if (this.currentPagePending * 20 >= this.currentUserListPending.length)
-    //   this.listViewPending = this.currentUserListPending.slice((this.currentPagePending - 1) * 20);
-    // else {
-    //   this.listViewPending = this.currentUserListPending.slice(
-    //     (this.currentPagePending - 1) * 20,
-    //     this.currentPagePending * 20
-    //   );
-    // }
     this.listViewPending = this.handlePage(this.currentPagePending, 20, this.currentUserListPending);
     this.latestPageNumberPending = this.currentPagePending;
-    var tempCurrentSelected: UserGroup[] = this.listViewPending.filter(a => tempSelectedList.indexOf(a) !== -1);
-    for(var r in tempCurrentSelected){
-      this.$refs.pendingTable.toggleRowSelection(r, true);
+    var tempCurrentSelected: UserGroup[] = this.listViewPending.filter(a => tempSelectedList.indexOf(a) != -1);
+    // (this.$refs.memberTable as ElTable).toggleRowSelection(tempSelectedList, true);
+    for(let r = 0; r < tempCurrentSelected.length; r++){
+      // I don't know why this code doesn't work
+      (this.$refs.pendingTable as ElTable).toggleRowSelection(tempCurrentSelected[r], true);
     }
     this.multipleSelectionPending = [...tempSelectedList];
   }
 
   private async handlePageMember() {
     var tempSelectedList: UserGroup[] = [...this.multipleSelectionMember];
-    // if (this.currentPageMember * 20 >= this.currentUserListMember.length)
-    //   this.listViewMember = this.currentUserListMember.slice((this.currentPageMember - 1) * 20);
-    // else {
-    //   this.listViewMember = this.currentUserListMember.slice(
-    //     (this.currentPageMember - 1) * 20,
-    //     this.currentPageMember * 20
-    //   );
-    // }
     this.listViewMember = this.handlePage(this.currentPageMember, 20, this.currentUserListMember);
     this.latestPageNumberMember = this.currentPageMember;
-    var tempCurrentSelected: UserGroup[] = this.listViewMember.filter(a => tempSelectedList.indexOf(a) !== -1);
-    for(var r in tempCurrentSelected){
-      this.$refs.memberTable.toggleRowSelection(r, true);
+    var tempCurrentSelected: UserGroup[] = this.listViewMember.filter(a => tempSelectedList.indexOf(a) != -1);
+    console.log(tempCurrentSelected);
+    // (this.$refs.memberTable as ElTable).toggleRowSelection(tempSelectedList, true);
+    for(let r = 0; r < tempCurrentSelected.length; r++){
+      // I don't know why this code doesn't work
+      (this.$refs.memberTable as ElTable).toggleRowSelection(this.listViewMember[this.listViewMember.indexOf(tempCurrentSelected[r])], true);
     }
     this.multipleSelectionMember = [...tempSelectedList];
   }
@@ -430,14 +420,6 @@ export default class GroupAdmin extends Vue {
   private async toggleShowSelectedPending() {
     if(this.isShowSelectedPending){
       this.isShowSelectedPending = false;
-      // if (this.latestPageNumberPending * 20 >= this.userListPending.length)
-      //   this.listViewPending = this.userListPending.slice((this.latestPageNumberPending - 1) * 20);
-      // else {
-      //   this.listViewPending = this.userListPending.slice(
-      //     (this.latestPageNumberPending - 1) * 20,
-      //     this.latestPageNumberPending * 20
-      //   );
-      // }
       this.listViewPending = this.handlePage(this.latestPageNumberPending, 20, this.userListPending);
       this.currentPagePending=this.latestPageNumberPending;
       this.totalPendingSize = this.sizeList();
@@ -455,14 +437,6 @@ export default class GroupAdmin extends Vue {
   private async toggleShowSelectedMember() {
     if(this.isShowSelectedMember){
       this.isShowSelectedMember = false;
-      // if (this.latestPageNumberMember * 20 >= this.userListMember.length)
-      //   this.listViewMember = this.userListMember.slice((this.latestPageNumberMember - 1) * 20);
-      // else {
-      //   this.listViewMember = this.userListMember.slice(
-      //     (this.latestPageNumberMember - 1) * 20,
-      //     this.latestPageNumberMember * 20
-      //   );
-      // }
       this.listViewMember = this.handlePage(this.latestPageNumberMember, 20, this.userListMember)
       this.currentPageMember=this.latestPageNumberMember;
       this.totalMemberSize = this.sizeList2();
@@ -513,10 +487,6 @@ export default class GroupAdmin extends Vue {
     else {
       this.multipleSelectionMember = this.multipleSelectionMember.filter(a => a.uid !== row.uid);
     }
-  }
-
-  private test(val, row){
-    console.log(val, row);
   }
 
   data() {
